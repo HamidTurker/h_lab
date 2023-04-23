@@ -1,7 +1,7 @@
 %% Vandermeer: LFP analysis with Neuralynx data, from start to finish
 % https://rcweb.dartmouth.edu/~mvdm/wiki/doku.php?id=analysis:nsb2015:week0
 % Note: the vandermeerlab (VDM) codebase functions have been adapted here into
-%       h.lab functions
+%       h_lab functions
 % Note: we'll be using Fieldtrip functions along the way
 
 clear all; clc
@@ -32,22 +32,17 @@ cfg = [];
 
 % Load CSC data from its location
 cfg.Flist = {path.cscdata};
-data = h_LoadCSC(cfg);
+LFP = h_LoadCSC(cfg);
 
 % Load Event data from its location
 cfg.Elist = {path.eventdata};
 events = h_LoadEvents(cfg);
 
-%% Load in Events
-cd(path.ratfolder)
-
-
-
 %% Filter the data in the ripple band (150-220Hz)
 cd(path.ratfolder)
-cfg = []; cfg.f = [150 220]; % specify passband
-LFPfilt = FilterLFP(cfg,LFP);
- 
+cfg = []; cfg.Filter = [150 220]; % specify passband
+LFPfilt = h_FilterLFP(cfg,LFP);
+
 % extract the signal envelope by Hilbert transform
  
 % detect intervals that pass a threshold
@@ -55,3 +50,9 @@ cfg = []; cfg.method = 'zscore';
 cfg.threshold = 5; cfg.select =  '>'; % return intervals where threshold is exceeded
  
 SWR = MakeIV(cfg,LFPfilt); % make intervals (corresponding to SWR events)
+
+
+
+
+
+
