@@ -1,4 +1,4 @@
-function  [pop, correlogram] = h_graph_correlogram(events, spikes, bin_bounds, do_Hz, do_plot)
+function  [pop, correlogram] = h_graph_correlogram(events, spikes, bin_bounds, do_Hz, do_average, do_plot)
 
 %  Make a correlogram
 %  
@@ -58,7 +58,9 @@ for i = 1:n_events
         end
     end
 end
-correlogram = atanh(mean(tanh(correlogram),3,'omitnan'));
+if (do_average)
+    correlogram = atanh(mean(tanh(correlogram),3,'omitnan'));
+end
 
 % Plot correlogram?
 if (do_plot)
