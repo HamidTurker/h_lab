@@ -1,4 +1,4 @@
-function  [pop, correlogram] = h_graph_correlogram(events, spikes, bin_bounds, do_Hz, do_average, do_plot)
+function  [pop, correlogram] = h_graph_correlogram(events, spikes, bin_bounds, do_Hz, do_average, do_plot, do_smooth, kernelbw)
 
 %  Make a correlogram
 %  
@@ -39,6 +39,15 @@ for i = 1:n_events
     end
 end
 
+% Smooth the population code?
+if (do_smooth)
+    for i = 1:n_events
+        for c = 1:n_cells
+            pop(c,:,i) = filter(gausswin(kernelbw),1,pop(c,:,i));
+        end
+    end
+end
+
 % Convert spike counts to Hz?
 if (do_Hz)
     for i = 1:n_events
@@ -58,13 +67,17 @@ for i = 1:n_events
         end
     end
 end
+
+% Average?
 if (do_average)
-    correlogram = atanh(mean(tanh(correlogram),3,'omitnan'));
+    correlogram = tanh(mean(atanh(correlogram),3,'omitnan'));
 end
 
 % Plot correlogram?
 if (do_plot)
-    heatmap(correlogram)
+    figure
+    h = heatmap(correlogram,'Colormap',summer);
+    h.NodeChildren(3).YDir='normal'; 
 end
 
 end
